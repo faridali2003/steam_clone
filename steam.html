@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Clone: Next Level</title>
+    <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="steam.css">
+</head>
+<body>
+
+<div id="authPage" class="auth-page">
+    <div class="auth-card">
+        <h2 id="authTitle">Login</h2>
+        <div class="auth-buttons">
+            <button class="btn primary" onclick="viewLogin()">Login</button>
+            <button class="btn" onclick="viewSignup()">Sign Up</button>
+        </div>
+        <form id="authForm" class="auth-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="btn primary auth-submit-btn">Continue</button>
+        </form>
+        <div id="authMessage" style="color: #ff6b6b; margin-top: 10px; text-align:center;"></div>
+    </div>
+</div>
+
+<div class="container" id="mainPage" style="display:none;">
+
+    <header>
+        <div class="logo">
+            <span class="mark">SC</span>
+            <div id="userMenuContainer" class="user-menu-container">
+                <div class="user-info" onclick="toggleUserMenu()">
+                    <span style="font-weight:700" id="userDisplay">USER</span>
+                    <span id="walletDisplay" class="wallet-display">[$0.00]</span>
+                </div>
+                <div id="userDropdown" class="user-dropdown">
+                    <button class="dropdown-link" onclick="showAccountManagement()">Account Management</button>
+                    <button class="dropdown-link" onclick="showWalletModal()">Add Funds / Redeem</button>
+                    <button class="dropdown-link" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="search">
+            <input id="searchBar" placeholder="Search games...">
+        </div>
+
+        <nav>
+            <button class="btn nav-btn active-tab" id="storeTab" onclick="showPage('store')">Store</button>
+            <button class="btn nav-btn" id="libraryTab" onclick="showPage('library')">Library</button>
+        </nav>
+    </header>
+    
+    <div class="content-wrapper">
+        <aside class="left-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Categories</div>
+                <a href="#" class="sidebar-link active-filter" data-tag="all" onclick="filterBy('all')">Featured</a>
+                <a href="#" class="sidebar-link">New Releases</a>
+                <a href="#" class="sidebar-link">Specials</a>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Browse By Genre</div>
+                <a href="#" class="sidebar-link" data-tag="action" onclick="filterBy('action')">Action Games</a>
+                <a href="#" class="sidebar-link" data-tag="rpg" onclick="filterBy('rpg')">RPGs</a>
+                <a href="#" class="sidebar-link" data-tag="strategy" onclick="filterBy('strategy')">Strategy</a>
+                <a href="#" class="sidebar-link" data-tag="sports" onclick="filterBy('sports')">Sports</a>
+                <a href="#" class="sidebar-link" data-tag="indie" onclick="filterBy('indie')">Indie</a>
+            </div>
+        </aside>
+
+        <div id="storePage" class="main-content-page">
+            <main class="main-content">
+                <section class="hero-section">
+                    <div class="hero-card">
+                        <img src="./images/featured_hero.jpg" alt="Featured Game Background" class="hero-background-img">
+                        <div class="hero-overlay">
+                            <div class="hero-text">
+                                <h1 id="featuredTitle">Featured Game Title</h1>
+                                <p class="meta" id="featuredMeta">Action • Adventure</p>
+                                <div class="carousel" id="carousel"></div>
+                                <div class="hero-actions">
+                                    <button class="btn primary" id="viewFeatured">View Page</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="controls">
+                    <h3>Store Browsing</h3>
+                    <div class="price-filter">
+                        <label for="priceRange" class="muted">Max Price: $<span id="currentPrice">70.00</span></label>
+                        <input type="range" id="priceRange" min="0" max="70" step="1" value="70">
+                    </div>
+                    <div class="sort-controls">
+                        <span class="muted">Sort:</span>
+                        <select id="sort">
+                            <option value="pop">Popularity</option>
+                            <option value="price">Price (Low to High)</option>
+                            <option value="alpha">A–Z</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="grid" id="grid"></section>
+            </main>
+        </div>
+
+        <div id="libraryPage" class="main-content-page" style="display:none;">
+            <main class="main-content">
+                <h2>Your Game Library</h2>
+                <p class="muted" style="margin-bottom: 20px;">Games owned by <span id="libraryUserDisplay">USER</span></p>
+                <section class="grid" id="libraryGrid"></section>
+            </main>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="dialog">
+        <span class="modal-close" onclick="closeModal()">✕</span>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<div id="accountModal" class="modal">
+    <div class="dialog">
+        <span class="modal-close" onclick="closeAccountModal()">✕</span>
+        <h3>Account Management for <span id="accountUserDisplay">USER</span></h3>
+        <p class="muted" style="margin-bottom: 20px;">Current Balance: <span id="accountWalletDisplay">$0.00</span></p>
+
+        <form id="changePasswordForm">
+            <h4 style="margin-top: 20px;">Change Password (Mock)</h4>
+            <input type="password" id="oldPassword" placeholder="Old Password" required>
+            <input type="password" id="newPassword" placeholder="New Password (min 6 chars)" required>
+            <input type="password" id="confirmPassword" placeholder="Confirm New Password" required>
+            <button type="submit" class="btn primary auth-submit-btn">Update Password</button>
+            <div id="passwordMessage" style="color: #ff6b6b; margin-top: 10px;"></div>
+        </form>
+    </div>
+</div>
+
+<div id="walletModal" class="modal">
+    <div class="dialog">
+        <span class="modal-close" onclick="closeWalletModal()">✕</span>
+        <h3>Add Funds to Wallet</h3>
+        <p class="muted" style="margin-bottom: 20px;">Current Balance: <span id="fundWalletDisplay">$0.00</span></p>
+        
+        <form id="addFundsForm">
+            <h4>Select Amount (Mock Payment)</h4>
+            <div class="fund-options">
+                <button type="button" class="btn fund-btn" data-amount="5.00">$5</button>
+                <button type="button" class="btn fund-btn" data-amount="10.00">$10</button>
+                <button type="button" class="btn fund-btn" data-amount="20.00">$20</button>
+            </div>
+
+            <h4 style="margin-top: 20px;">Redeem Card (Mock)</h4>
+            <input type="text" id="redeemCode" placeholder="Enter Redeem Code (e.g., GIFT10)" required>
+            <button type="submit" class="btn primary auth-submit-btn">Redeem Code</button>
+            <div id="redeemMessage" style="color: #ff6b6b; margin-top: 10px;"></div>
+        </form>
+    </div>
+</div>
+
+<script src="steam.js"></script>
+</body>
+</html>
